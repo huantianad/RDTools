@@ -1,5 +1,8 @@
 import tkinter as tk
+
 from pynput import keyboard
+
+from tools import bulk_downloader
 
 
 class Application(tk.Frame):
@@ -7,6 +10,7 @@ class Application(tk.Frame):
         super().__init__(master)
         self.master = master
         self.pack()
+        self.font = ("Segoe UI", 20)
         self.create_widgets()
         self.on = True
 
@@ -19,7 +23,7 @@ class Application(tk.Frame):
 
         self.create_menus()
 
-        self.main_text = tk.Text(self.canvas, font=("Segoe UI", 20))
+        self.main_text = tk.Text(self.canvas, font=self.font)
         self.main_text.tag_configure("center", justify='center')
         self.main_text.insert("insert", 'Welcome to huantian\'s RDTools!\nClick the "Tools" tab to select a tool!')
         self.main_text.tag_add("center", "1.0", "end")
@@ -57,7 +61,27 @@ class Application(tk.Frame):
     def bulk_download(self):
         self.reset_canvas()
 
-        self.download_button = tk.Button(self.canvas, text="Download").pack(side="bottom")
+        self.mode = tk.IntVar(root)
+        self.mode_positional = tk.Radiobutton(self.canvas, text="Positional", variable=self.mode, value=0, command=self.bulk_positional).pack(anchor="w")
+        self.mode_difference = tk.Radiobutton(self.canvas, text="Difference", variable=self.mode, value=1).pack(anchor="w")
+
+        self.bulk_frame = tk.Frame(self.canvas)
+        self.bulk_frame.pack()
+
+    def bulk_positional(self):
+        self.bulk_frame.destroy()
+        self.bulk_frame = tk.Frame(self.canvas)
+        self.bulk_frame.pack()
+
+        levels_list = bulk_downloader.get_initial()
+        self.amount_display = tk.Label(self.bulk_frame, text=f"Total amount of levels: {len(levels_list)}").pack(anchor="ne")
+        self.start_select = tk.Spinbox(self.bulk_frame, from_=1, to=len(levels_list))
+        self.start_select.pack(anchor="ne")
+        self.end_select = tk.Spinbox(self.bulk_frame, from_=1, to=len(levels_list))
+        self.end_select.pack(anchor="ne")
+
+        self.download_button = tk.Button(self.bulk_frame, text="Download", command=lambda: bulk_downloader.download_all(levels_list, int(self.start_select.get()), int(self.end_select.get()))).pack(
+            side="bottom")
 
 
 root = tk.Tk()

@@ -7,6 +7,8 @@ verify_ssl = true
 
 [packages]
 pynput = "*"
+requests = "*"
+clint = "*"
 
 [requires]
 python_version = "3.8"
