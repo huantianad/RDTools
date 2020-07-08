@@ -89,26 +89,26 @@ class Application(tk.Frame):
         self.bulk_frame.pack()
 
         # Create inputs for level selection.
-        self.start_select = tk.Spinbox(self.bulk_frame, from_=1, to=len(self.levels_list))
-        self.start_select.pack(anchor="ne")
-        self.end_select = tk.Spinbox(self.bulk_frame, from_=1, to=len(self.levels_list))
-        self.end_select.pack(anchor="ne")
+        self.start_label = tk.Label(self.bulk_frame, text="Start:").grid(row=1)
+        self.start_select = tk.Spinbox(self.bulk_frame, from_=1, to=len(self.levels_list), width=10)
+        self.start_select.grid(column=2, row=1)
+
+        self.start_label = tk.Label(self.bulk_frame, text="End:").grid(row=2)
+        self.end_select = tk.Spinbox(self.bulk_frame, from_=1, to=len(self.levels_list), width=10)
+        self.end_select.grid(column=2, row=2)
+
+        self.start_label = tk.Label(self.bulk_frame, text="Threads:").grid(row=3)
+        self.thread_select = tk.Spinbox(self.bulk_frame, from_=1, to=64, width=10)
+        self.thread_select.grid(column=2, row=3)
 
         # Create download button
         self.download_button = tk.Button(self.bulk_frame,
                                          text="Download",
                                          command=lambda: bulk_downloader.download_all(self.levels_list,
                                                                                       int(self.start_select.get()),
-                                                                                      int(self.end_select.get())))
-        self.download_button.pack(side="bottom")
-
-    def bulk_difference(self):
-        self.bulk_frame.destroy()
-        self.bulk_frame = tk.Frame(self.canvas)
-        self.bulk_frame.pack()
-
-        self.select_file = tk.Button(self.bulk_frame, text="Select File", command=self.positional_file_save)
-        self.select_file.pack()
+                                                                                      int(self.end_select.get()),
+                                                                                      int(self.thread_select.get())))
+        self.download_button.grid(columnspan=3)
 
     def positional_file_save(self):
         # Function to save the name of the selected file.
@@ -116,6 +116,25 @@ class Application(tk.Frame):
                                                                title="Select file",
                                                                filetypes=(("Text files", "*.txt"),))
         print(self.positional_file_name)
+
+    def bulk_difference(self):
+        self.bulk_frame.destroy()
+        self.bulk_frame = tk.Frame(self.canvas)
+        self.bulk_frame.pack()
+
+        self.start_label = tk.Label(self.bulk_frame, text="Threads:").grid(row=1)
+        self.thread_select = tk.Spinbox(self.bulk_frame, from_=1, to=64, width=10)
+        self.thread_select.grid(column=2, row=1)
+
+        self.select_file = tk.Button(self.bulk_frame, text="Select File", command=self.positional_file_save)
+        self.select_file.grid(columnspan=3, row=2)
+
+        self.download_button = tk.Button(self.bulk_frame,
+                                         text="Download",
+                                         command=lambda: bulk_downloader.positional_download(self.levels_list,
+                                                                                             self.positional_file_name,
+                                                                                             int(self.thread_select.get())))
+        self.download_button.grid(columnspan=3)
 
 
 root = tk.Tk()

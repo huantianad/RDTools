@@ -44,11 +44,25 @@ def download(url):
     return name
 
 
-def download_all(url_list, start, end):
+def download_all(url_list, start, end, threads):
     urls = []
-    threads = 8
     for level in url_list[start - 1:end]:
         urls.append(level['download_url'])
+
+    results = ThreadPool(threads).imap_unordered(download, urls)
+    for chunk in progress.bar(results, expected_size=len(urls)):
+        print(f"Done downloading {chunk}" + ' ' * 30)
+
+
+def positional_download(url_list, file, threads):
+    urls = []
+    for level in url_list:
+        urls.append(level['download_url'])
+
+    with open(file, 'r') as data:
+        urls_dl = data.read().splitlines()
+        urls = set(urls).difference(urls_dl)
+
     results = ThreadPool(threads).imap_unordered(download, urls)
     for chunk in progress.bar(results, expected_size=len(urls)):
         print(f"Done downloading {chunk}" + ' ' * 30)
