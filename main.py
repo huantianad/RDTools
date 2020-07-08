@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import filedialog
 
 from pynput import keyboard
 
@@ -54,34 +55,67 @@ class Application(tk.Frame):
             self.on = True
 
     def reset_canvas(self):
+        # Funciton to reset canvas
         self.canvas.destroy()
         self.canvas = tk.Canvas(self)
         self.canvas.pack()
 
     def bulk_download(self):
+        # Resets canvas
         self.reset_canvas()
 
-        self.mode = tk.IntVar(root)
-        self.mode_positional = tk.Radiobutton(self.canvas, text="Positional", variable=self.mode, value=0, command=self.bulk_positional).pack(anchor="w")
-        self.mode_difference = tk.Radiobutton(self.canvas, text="Difference", variable=self.mode, value=1).pack(anchor="w")
+        # Get initial list of levels and displays amount
+        self.levels_list = bulk_downloader.get_initial()
+        self.amount_display = tk.Label(self.canvas, text=f"Total amount of levels: {len(self.levels_list)}").pack(
+            anchor="n")
 
+        # Setup positional/difference selection
+        self.mode = tk.IntVar(root)
+        self.mode_positional = tk.Radiobutton(self.canvas, text="Positional", variable=self.mode, value=0,
+                                              command=self.bulk_positional).pack(anchor="w")
+        self.mode_difference = tk.Radiobutton(self.canvas, text="Difference", variable=self.mode, value=1,
+                                              command=self.bulk_difference).pack(anchor="w")
+
+        # Create frame for downloading content.
         self.bulk_frame = tk.Frame(self.canvas)
         self.bulk_frame.pack()
 
+        self.bulk_positional()
+
     def bulk_positional(self):
+        # Reset frame
         self.bulk_frame.destroy()
         self.bulk_frame = tk.Frame(self.canvas)
         self.bulk_frame.pack()
 
-        levels_list = bulk_downloader.get_initial()
-        self.amount_display = tk.Label(self.bulk_frame, text=f"Total amount of levels: {len(levels_list)}").pack(anchor="ne")
-        self.start_select = tk.Spinbox(self.bulk_frame, from_=1, to=len(levels_list))
+        # Create inputs for level selection.
+        self.start_select = tk.Spinbox(self.bulk_frame, from_=1, to=len(self.levels_list))
         self.start_select.pack(anchor="ne")
-        self.end_select = tk.Spinbox(self.bulk_frame, from_=1, to=len(levels_list))
+        self.end_select = tk.Spinbox(self.bulk_frame, from_=1, to=len(self.levels_list))
         self.end_select.pack(anchor="ne")
 
-        self.download_button = tk.Button(self.bulk_frame, text="Download", command=lambda: bulk_downloader.download_all(levels_list, int(self.start_select.get()), int(self.end_select.get()))).pack(
-            side="bottom")
+        # Create download button
+        self.download_button = tk.Button(self.bulk_frame,
+                                         text="Download",
+                                         command=lambda: bulk_downloader.download_all(self.levels_list,
+                                                                                      int(self.start_select.get()),
+                                                                                      int(self.end_select.get())))
+        self.download_button.pack(side="bottom")
+
+    def bulk_difference(self):
+        self.bulk_frame.destroy()
+        self.bulk_frame = tk.Frame(self.canvas)
+        self.bulk_frame.pack()
+
+        self.select_file = tk.Button(self.bulk_frame, text="Select File", command=self.positional_file_save)
+        self.select_file.pack()
+
+    def positional_file_save(self):
+        # Function to save the name of the selected file.
+        self.positional_file_name = filedialog.askopenfilename(initialdir="/",
+                                                               title="Select file",
+                                                               filetypes=(("Text files", "*.txt"),))
+        print(self.positional_file_name)
 
 
 root = tk.Tk()
