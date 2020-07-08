@@ -2,10 +2,10 @@
 Cool RD stuff in python with fun GUI
 
 ## Features/To-Do
-[x] Bulk Downloader
-[ ] Auto Extract
-[ ] Auto New Level Downloader
-[ ] Auto Daily Blend
+- [x] Bulk Downloader
+- [ ] Auto Extract
+- [ ] Auto New Level Downloader
+- [ ] Auto Daily Blend
 
 # Installation
 1. Clone the repository: `git clone https://github.com/huantianad/RDTools`
