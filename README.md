@@ -13,3 +13,6 @@ Cool RD stuff in python with fun GUI
 
 # Usage
 To start the program, run `main.py`. Under the "Tools" menu, select the required tool. 
+
+### Bulk Downloader
+There are two modes for this: "Positional" and "Difference". 

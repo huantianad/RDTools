@@ -6,11 +6,12 @@ import requests
 from clint.textui import progress
 
 levelpath = os.path.join('C:\\', 'Users', os.getlogin(), 'Documents', 'Rhythm Doctor', 'Levels')
+file_mode: int = 0
 
 
 # Create function to handle renaming.
 def rename(name, index):
-    if os.path.exists(f'{levelpath}/{name} ({index})'):
+    if os.path.exists(f'{levelpath}/{name.split(".rdzip")[0]} ({index}).rdzip'):
         return rename(name, index + 1)
     else:
         newname = name.split('.rdzip')[0]
@@ -35,7 +36,11 @@ def download(url):
 
     # Append (1) to file name if already exists.
     if os.path.exists(f'{levelpath}/{name}'):
-        name = rename(name, 1)
+        if file_mode == 0:
+            name = rename(name, 1)
+        elif file_mode == 2:
+            print(f"Skipping {name}")
+            return name
 
     # Download and save zipped level in preZip.
     dwn = requests.get(url, stream=True)
@@ -44,8 +49,10 @@ def download(url):
     return name
 
 
-def download_all(url_list, start, end, threads):
+def download_all(url_list, start, end, threads, file):
     urls = []
+    global file_mode
+    file_mode = file
     for level in url_list[start - 1:end]:
         urls.append(level['download_url'])
 
@@ -54,8 +61,10 @@ def download_all(url_list, start, end, threads):
         print(f"Done downloading {chunk}" + ' ' * 30)
 
 
-def positional_download(url_list, file, threads):
+def positional_download(url_list, file, threads, file_thing):
     urls = []
+    global file_mode
+    file_mode = file_thing
     for level in url_list:
         urls.append(level['download_url'])
 

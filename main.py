@@ -46,6 +46,10 @@ class Application(tk.Frame):
         tools.add_command(label="Auto Daily Blend")
         menu.add_cascade(label="Tools", menu=tools)
 
+        others = tk.Menu(self, tearoff=0)
+        others.add_command(label="Samurai.", command=self.samurai)
+        menu.add_cascade(label="Others", menu=others)
+
     def withdraw(self):
         if self.on:
             root.withdraw()
@@ -60,6 +64,11 @@ class Application(tk.Frame):
         self.canvas = tk.Canvas(self)
         self.canvas.pack()
 
+    def samurai(self):
+        self.reset_canvas()
+
+        text = tk.Label(self.canvas, text="Samurai.").pack()
+
     def bulk_download(self):
         # Resets canvas
         self.reset_canvas()
@@ -69,12 +78,23 @@ class Application(tk.Frame):
         self.amount_display = tk.Label(self.canvas, text=f"Total amount of levels: {len(self.levels_list)}").pack(
             anchor="n")
 
+        self.bulk_option_frame = tk.Frame(self.canvas)
+        self.bulk_option_frame.pack()
+
         # Setup positional/difference selection
         self.mode = tk.IntVar(root)
-        self.mode_positional = tk.Radiobutton(self.canvas, text="Positional", variable=self.mode, value=0,
-                                              command=self.bulk_positional).pack(anchor="w")
-        self.mode_difference = tk.Radiobutton(self.canvas, text="Difference", variable=self.mode, value=1,
-                                              command=self.bulk_difference).pack(anchor="w")
+        self.mode_positional = tk.Radiobutton(self.bulk_option_frame, text="Positional", variable=self.mode, value=0,
+                                              command=self.bulk_positional).grid(row=1, column=0, sticky="W")
+        self.mode_difference = tk.Radiobutton(self.bulk_option_frame, text="Difference", variable=self.mode, value=1,
+                                              command=self.bulk_difference).grid(row=2, column=0, sticky="W")
+
+        self.file_mode = tk.IntVar(root)
+        self.mode_rename = tk.Radiobutton(self.bulk_option_frame, text="Rename", variable=self.file_mode, value=0).grid(
+            row=1, column=1, sticky="W")
+        self.mode_overwrite = tk.Radiobutton(self.bulk_option_frame, text="Overwrite", variable=self.file_mode,
+                                             value=1).grid(row=2, column=1, sticky="W")
+        self.mode_skip = tk.Radiobutton(self.bulk_option_frame, text="Skip", variable=self.file_mode, value=2).grid(
+            row=3, column=1, sticky="W")
 
         # Create frame for downloading content.
         self.bulk_frame = tk.Frame(self.canvas)
@@ -100,6 +120,8 @@ class Application(tk.Frame):
         self.start_label = tk.Label(self.bulk_frame, text="Threads:").grid(row=3)
         self.thread_select = tk.Spinbox(self.bulk_frame, from_=1, to=64, width=10)
         self.thread_select.grid(column=2, row=3)
+        self.thread_select.delete(0, "end")
+        self.thread_select.insert(0, 8)
 
         # Create download button
         self.download_button = tk.Button(self.bulk_frame,
@@ -107,7 +129,8 @@ class Application(tk.Frame):
                                          command=lambda: bulk_downloader.download_all(self.levels_list,
                                                                                       int(self.start_select.get()),
                                                                                       int(self.end_select.get()),
-                                                                                      int(self.thread_select.get())))
+                                                                                      int(self.thread_select.get()),
+                                                                                      int(self.file_mode.get())))
         self.download_button.grid(columnspan=3)
 
     def positional_file_save(self):
@@ -115,7 +138,6 @@ class Application(tk.Frame):
         self.positional_file_name = filedialog.askopenfilename(initialdir="/",
                                                                title="Select file",
                                                                filetypes=(("Text files", "*.txt"),))
-        print(self.positional_file_name)
 
     def bulk_difference(self):
         self.bulk_frame.destroy()
@@ -125,6 +147,8 @@ class Application(tk.Frame):
         self.start_label = tk.Label(self.bulk_frame, text="Threads:").grid(row=1)
         self.thread_select = tk.Spinbox(self.bulk_frame, from_=1, to=64, width=10)
         self.thread_select.grid(column=2, row=1)
+        self.thread_select.delete(0, "end")
+        self.thread_select.insert(0, 8)
 
         self.select_file = tk.Button(self.bulk_frame, text="Select File", command=self.positional_file_save)
         self.select_file.grid(columnspan=3, row=2)
