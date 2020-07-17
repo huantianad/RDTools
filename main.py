@@ -1,4 +1,5 @@
 import os
+import sys
 import tkinter as tk
 from tkinter import filedialog
 
@@ -23,11 +24,21 @@ class Application(tk.Frame):
         self.download_dir_name = tk.StringVar()
         self.download_dir_name.set(os.path.join('C:\\', 'Users', os.getlogin(), 'Documents', 'Rhythm Doctor', 'Levels'))
 
+    def resource_path(self, relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
+
     def create_widgets(self):
         """Base Widget Creator"""
         # Window title and icon
         self.master.title("RDTools")
-        self.master.iconbitmap("resources/icon.ico")
+        self.master.iconbitmap(self.resource_path("resources/icon.ico"))
 
         # Create base canvas
         self.canvas = tk.Canvas(self)
@@ -166,7 +177,7 @@ class Application(tk.Frame):
                                                                                       int(self.end_select.get()),
                                                                                       int(self.thread_select.get()),
                                                                                       int(self.file_mode.get()),
-                                                                                      self.download_dir_name))
+                                                                                      self.download_dir_name.get()))
         self.download_button.grid(columnspan=3)
 
     def positional_file_save(self):
@@ -198,7 +209,7 @@ class Application(tk.Frame):
                                          command=lambda: bulk_downloader.positional_download(self.levels_list,
                                                                                              self.positional_file_name,
                                                                                              int(self.thread_select.get()),
-                                                                                             self.download_dir_name))
+                                                                                             self.download_dir_name.get()))
         self.download_button.grid(columnspan=3)
 
 
