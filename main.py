@@ -151,23 +151,23 @@ class Application(tk.Frame):
         self.bulk_frame.pack()
 
         # Create inputs for level selection.
-        self.start_label = tk.Label(self.bulk_frame, text="Start:").grid(row=1)
+        self.start_label = tk.Label(self.bulk_frame, text="Start:").grid(row=1, sticky="e")
         self.start_select = tk.Spinbox(self.bulk_frame, from_=1, to=len(self.levels_list), width=10)
-        self.start_select.grid(column=2, row=1)
+        self.start_select.grid(column=1, row=1, sticky="w")
 
-        self.start_label = tk.Label(self.bulk_frame, text="End:").grid(row=2)
+        self.start_label = tk.Label(self.bulk_frame, text="End:").grid(row=2, sticky="e")
         self.end_select = tk.Spinbox(self.bulk_frame, from_=1, to=len(self.levels_list), width=10)
-        self.end_select.grid(column=2, row=2)
+        self.end_select.grid(column=1, row=2, sticky="w")
 
-        self.start_label = tk.Label(self.bulk_frame, text="Threads:").grid(row=3)
+        self.start_label = tk.Label(self.bulk_frame, text="Threads:").grid(row=3, sticky="e")
         self.thread_select = tk.Spinbox(self.bulk_frame, from_=1, to=64, width=10)
-        self.thread_select.grid(column=2, row=3)
+        self.thread_select.grid(column=1, row=3, sticky="w")
         self.thread_select.delete(0, "end")
         self.thread_select.insert(0, 8)
 
         self.download_dir = tk.Button(self.bulk_frame, text="Download Dir", command=self.select_download_dir).grid(
-            columnspan=3)
-        self.download_label = tk.Label(self.bulk_frame, textvariable=self.download_dir_name).grid(columnspan=3)
+            columnspan=2)
+        self.download_label = tk.Label(self.bulk_frame, textvariable=self.download_dir_name).grid(columnspan=2)
 
         # Create download button
         self.download_button = tk.Button(self.bulk_frame,
@@ -178,7 +178,7 @@ class Application(tk.Frame):
                                                                                       int(self.thread_select.get()),
                                                                                       int(self.file_mode.get()),
                                                                                       self.download_dir_name.get()))
-        self.download_button.grid(columnspan=3)
+        self.download_button.grid(columnspan=2)
 
     def positional_file_save(self):
         """Prompts and saves positional file."""
@@ -191,18 +191,18 @@ class Application(tk.Frame):
         self.bulk_frame = tk.Frame(self.canvas)
         self.bulk_frame.pack()
 
-        self.start_label = tk.Label(self.bulk_frame, text="Threads:").grid(row=1)
+        self.start_label = tk.Label(self.bulk_frame, text="Threads:").grid(row=1, sticky="e")
         self.thread_select = tk.Spinbox(self.bulk_frame, from_=1, to=64, width=10)
-        self.thread_select.grid(column=2, row=1)
+        self.thread_select.grid(column=1, row=1, sticky="w")
         self.thread_select.delete(0, "end")
         self.thread_select.insert(0, 8)
 
         self.select_file = tk.Button(self.bulk_frame, text="Select File", command=self.positional_file_save)
-        self.select_file.grid(columnspan=3, row=2)
+        self.select_file.grid(columnspan=2, row=2)
 
         self.download_dir = tk.Button(self.bulk_frame, text="Download Dir", command=self.select_download_dir).grid(
-            columnspan=3)
-        self.download_label = tk.Label(self.bulk_frame, textvariable=self.download_dir_name).grid(columnspan=3)
+            columnspan=2)
+        self.download_label = tk.Label(self.bulk_frame, textvariable=self.download_dir_name).grid(columnspan=2)
 
         self.download_button = tk.Button(self.bulk_frame,
                                          text="Download",
