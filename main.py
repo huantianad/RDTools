@@ -1,6 +1,6 @@
+import os
 import tkinter as tk
 from tkinter import filedialog
-import os
 
 from pynput import keyboard
 
@@ -17,7 +17,6 @@ class Application(tk.Frame):
         self.font = ("Segoe UI", 20)
         self.on = True
 
-        # Create widgets
         self.create_widgets()
 
         # Setup variable for storing download directory
@@ -34,7 +33,6 @@ class Application(tk.Frame):
         self.canvas = tk.Canvas(self)
         self.canvas.pack()
 
-        # Create topbar menus
         self.create_menus()
 
         # Create main menu text
@@ -55,9 +53,9 @@ class Application(tk.Frame):
 
         tools = tk.Menu(self, tearoff=0)
         tools.add_command(label="Bulk Downloader", command=self.bulk_download)
-        tools.add_command(label="Auto Extract")
-        tools.add_command(label="Auto Download New Levels")
-        tools.add_command(label="Auto Daily Blend")
+        tools.add_command(label="Auto Extract", command=self.not_exist)
+        tools.add_command(label="Auto Download New Levels", command=self.not_exist)
+        tools.add_command(label="Auto Daily Blend", command=self.not_exist)
         menu.add_cascade(label="Tools", menu=tools)
 
         others = tk.Menu(self, tearoff=0)
@@ -65,6 +63,7 @@ class Application(tk.Frame):
         menu.add_cascade(label="Others", menu=others)
 
     def withdraw(self):
+        """Function to help with hiding window"""
         if self.on:
             root.withdraw()
             self.on = False
@@ -73,18 +72,29 @@ class Application(tk.Frame):
             self.on = True
 
     def reset_canvas(self):
-        # Funciton to reset canvas
+        """Function to reset canvas"""
         self.canvas.destroy()
         self.canvas = tk.Canvas(self)
         self.canvas.pack()
 
     def samurai(self):
+        """Samurai menu item"""
         self.reset_canvas()
 
         text = tk.Label(self.canvas, text="Samurai.").pack()
 
+    def not_exist(self):
+        """Menu when funciton not implemented"""
+        self.reset_canvas()
+
+        self.main_text = tk.Text(self.canvas, font=self.font)
+        self.main_text.tag_configure("center", justify='center')
+        self.main_text.insert("insert", 'Samurai says:\n Hmmm... This function seems to not be implemented yet.')
+        self.main_text.tag_add("center", "1.0", "end")
+        self.main_text.pack()
+
     def bulk_download(self):
-        # Resets canvas
+        """Main code for bulk downloader"""
         self.reset_canvas()
 
         # Get initial list of levels and displays amount
@@ -92,16 +102,18 @@ class Application(tk.Frame):
         self.amount_display = tk.Label(self.canvas, text=f"Total amount of levels: {len(self.levels_list)}").pack(
             anchor="n")
 
+        # Create options frame for downloader
         self.bulk_option_frame = tk.Frame(self.canvas)
         self.bulk_option_frame.pack()
 
-        # Setup positional/difference selection
+        # Positional/difference selection
         self.mode = tk.IntVar(root)
         self.mode_positional = tk.Radiobutton(self.bulk_option_frame, text="Positional", variable=self.mode, value=0,
                                               command=self.bulk_positional).grid(row=1, column=0, sticky="W")
         self.mode_difference = tk.Radiobutton(self.bulk_option_frame, text="Difference", variable=self.mode, value=1,
                                               command=self.bulk_difference).grid(row=2, column=0, sticky="W")
 
+        # Same name selection
         self.file_mode = tk.IntVar(root)
         self.mode_rename = tk.Radiobutton(self.bulk_option_frame, text="Rename", variable=self.file_mode, value=0).grid(
             row=1, column=1, sticky="W")
@@ -110,13 +122,14 @@ class Application(tk.Frame):
         self.mode_skip = tk.Radiobutton(self.bulk_option_frame, text="Skip", variable=self.file_mode, value=2).grid(
             row=3, column=1, sticky="W")
 
-        # Create frame for downloading content.
+        # Create main frame for downloading content.
         self.bulk_frame = tk.Frame(self.canvas)
         self.bulk_frame.pack()
 
         self.bulk_positional()
 
     def select_download_dir(self):
+        """Prompts for directory to download file to."""
         self.download_dir_name.set(filedialog.askdirectory(initialdir="/",
                                                     title="Select download directory"))
 
@@ -157,7 +170,7 @@ class Application(tk.Frame):
         self.download_button.grid(columnspan=3)
 
     def positional_file_save(self):
-        # Function to save the name of the selected file.
+        """Prompts and saves positional file."""
         self.positional_file_name = filedialog.askopenfilename(initialdir="/",
                                                                title="Select file",
                                                                filetypes=(("Text files", "*.txt"),))
@@ -189,6 +202,7 @@ class Application(tk.Frame):
         self.download_button.grid(columnspan=3)
 
 
+# Setup base tkinter app and create my app
 root = tk.Tk()
 root.geometry("450x300")
 app = Application(master=root)
