@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import filedialog
+import os
 
 from pynput import keyboard
 
@@ -11,19 +12,32 @@ class Application(tk.Frame):
         super().__init__(master)
         self.master = master
         self.pack()
+
+        # Required variables
         self.font = ("Segoe UI", 20)
-        self.create_widgets()
         self.on = True
 
+        # Create widgets
+        self.create_widgets()
+
+        # Setup variable for storing download directory
+        self.download_dir_name = tk.StringVar()
+        self.download_dir_name.set(os.path.join('C:\\', 'Users', os.getlogin(), 'Documents', 'Rhythm Doctor', 'Levels'))
+
     def create_widgets(self):
+        """Base Widget Creator"""
+        # Window title and icon
         self.master.title("RDTools")
         self.master.iconbitmap("resources/icon.ico")
 
+        # Create base canvas
         self.canvas = tk.Canvas(self)
         self.canvas.pack()
 
+        # Create topbar menus
         self.create_menus()
 
+        # Create main menu text
         self.main_text = tk.Text(self.canvas, font=self.font)
         self.main_text.tag_configure("center", justify='center')
         self.main_text.insert("insert", 'Welcome to huantian\'s RDTools!\nClick the "Tools" tab to select a tool!')
@@ -102,6 +116,10 @@ class Application(tk.Frame):
 
         self.bulk_positional()
 
+    def select_download_dir(self):
+        self.download_dir_name.set(filedialog.askdirectory(initialdir="/",
+                                                    title="Select download directory"))
+
     def bulk_positional(self):
         # Reset frame
         self.bulk_frame.destroy()
@@ -123,6 +141,10 @@ class Application(tk.Frame):
         self.thread_select.delete(0, "end")
         self.thread_select.insert(0, 8)
 
+        self.download_dir = tk.Button(self.bulk_frame, text="Download Dir", command=self.select_download_dir).grid(
+            columnspan=3)
+        self.download_label = tk.Label(self.bulk_frame, textvariable=self.download_dir_name).grid(columnspan=3)
+
         # Create download button
         self.download_button = tk.Button(self.bulk_frame,
                                          text="Download",
@@ -130,7 +152,8 @@ class Application(tk.Frame):
                                                                                       int(self.start_select.get()),
                                                                                       int(self.end_select.get()),
                                                                                       int(self.thread_select.get()),
-                                                                                      int(self.file_mode.get())))
+                                                                                      int(self.file_mode.get()),
+                                                                                      self.download_dir_name))
         self.download_button.grid(columnspan=3)
 
     def positional_file_save(self):
@@ -153,11 +176,16 @@ class Application(tk.Frame):
         self.select_file = tk.Button(self.bulk_frame, text="Select File", command=self.positional_file_save)
         self.select_file.grid(columnspan=3, row=2)
 
+        self.download_dir = tk.Button(self.bulk_frame, text="Download Dir", command=self.select_download_dir).grid(
+            columnspan=3)
+        self.download_label = tk.Label(self.bulk_frame, textvariable=self.download_dir_name).grid(columnspan=3)
+
         self.download_button = tk.Button(self.bulk_frame,
                                          text="Download",
                                          command=lambda: bulk_downloader.positional_download(self.levels_list,
                                                                                              self.positional_file_name,
-                                                                                             int(self.thread_select.get())))
+                                                                                             int(self.thread_select.get()),
+                                                                                             self.download_dir_name))
         self.download_button.grid(columnspan=3)
 
 

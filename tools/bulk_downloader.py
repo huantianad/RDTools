@@ -49,10 +49,12 @@ def download(url):
     return name
 
 
-def download_all(url_list, start, end, threads, file):
+def download_all(url_list, start, end, threads, file, path):
     urls = []
     global file_mode
+    global levelpath
     file_mode = file
+    levelpath = path
     for level in url_list[start - 1:end]:
         urls.append(level['download_url'])
 
@@ -61,10 +63,12 @@ def download_all(url_list, start, end, threads, file):
         print(f"Done downloading {chunk}" + ' ' * 30)
 
 
-def positional_download(url_list, file, threads, file_thing):
+def positional_download(url_list, file, threads, file_thing, path):
     urls = []
     global file_mode
+    global levelpath
     file_mode = file_thing
+    levelpath = path
     for level in url_list:
         urls.append(level['download_url'])
 
